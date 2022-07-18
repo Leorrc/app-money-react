@@ -6,12 +6,24 @@ import { TransactionsContext } from '../../TransactionsContext';
 
 import { Container } from './styles';
 
-
-
 export function Summary() {
+  const { transactions } = useContext(TransactionsContext);
 
-  const data = useContext(TransactionsContext);
+  const summary = transactions.reduce((acc, transactions) => {
+    if (transactions.type == 'deposit') {
+      acc.deposits += transactions.amount;
+      acc.total += transactions.amount;
+    } else {
+      acc.withdraws += transactions.amount;
+      acc.total -= transactions.amount;
+    }
 
+    return acc;
+  }, {
+    deposits: 0,
+    withdraws: 0,
+    total: 0,
+  })
 
   return (
     <Container>
@@ -20,21 +32,21 @@ export function Summary() {
           <p>Entradas</p>
           <img src={incomeImg} alt="Entradas" />
         </header>
-        <strong>R$1000,00</strong>
+        <strong>{summary.deposits}</strong>
       </div>
       <div>
         <header>
           <p>Saidas</p>
           <img src={outcomeImg} alt="Saidas" />
         </header>
-        <strong>- R$500,00</strong>
+        <strong>- {summary.withdraws}</strong>
       </div>
       <div className="highlight-background">
         <header>
           <p>Total</p>
           <img src={totalImg} alt="Total" />
         </header>
-        <strong>R$500,00</strong>
+        <strong>{summary.total}</strong>
       </div>
     </Container>
 
